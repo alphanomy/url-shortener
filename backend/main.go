@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -33,7 +35,13 @@ func main() {
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
 
-	dsn := dbUsername + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?parseTime=true"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		url.QueryEscape(dbUsername),
+		url.QueryEscape(dbPassword),
+		dbHost,
+		dbPort,
+		dbName,
+	)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
